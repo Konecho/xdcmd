@@ -1,0 +1,21 @@
+{
+    "xdcmd": {
+        "cargoLocks": null,
+        "date": "2024-12-21",
+        "extract": null,
+        "name": "xdcmd",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "rev": "9a9d090eb8b4294fe37c4e1bb1d442c2dabd60c7",
+            "sha256": "sha256-6NgjlLhron66bpfmX7wxRQ+KgY3Dz9U4mixdJQ7i9OE=",
+            "type": "git",
+            "url": "https://github.com/TransparentLC/xdcmd.git"
+        },
+        "version": "9a9d090eb8b4294fe37c4e1bb1d442c2dabd60c7"
+    }
+}
