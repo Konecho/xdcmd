@@ -3,15 +3,15 @@
 {
   xdcmd = {
     pname = "xdcmd";
-    version = "9a9d090eb8b4294fe37c4e1bb1d442c2dabd60c7";
+    version = "ad6290abe1d73b280e8dccced26627b80a80c3cc";
     src = fetchgit {
       url = "https://github.com/TransparentLC/xdcmd.git";
-      rev = "9a9d090eb8b4294fe37c4e1bb1d442c2dabd60c7";
+      rev = "ad6290abe1d73b280e8dccced26627b80a80c3cc";
       fetchSubmodules = false;
       deepClone = false;
       leaveDotGit = false;
-      sha256 = "sha256-6NgjlLhron66bpfmX7wxRQ+KgY3Dz9U4mixdJQ7i9OE=";
+      sha256 = "sha256-xtAsPGwQ54jofDWVjC/RtLL59o/NDx7CcojoBmL1NBA=";
     };
-    date = "2024-12-21";
+    date = "2024-12-31";
   };
 }
