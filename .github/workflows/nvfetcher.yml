@@ -1,8 +1,8 @@
 name: Automatically update
 on:
-  # push:
-  #   branches:
-  #     - master
+  push:
+    branches:
+      - master
   schedule:
     - cron: '0 */12 * * *'
 
@@ -12,6 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
+          token: ${{ secrets.PAT }}
           fetch-depth: 0
     # - name: Cache nvfetcher
     #   uses: actions/cache@v4
@@ -29,7 +30,9 @@ jobs:
 
     - name: Run nvfetcher
       run: |
-        nix run nixpkgs#nvfetcher 
+        nix develop
+        python update.py 
+        nvfetcher 
 
     - name: Run flake check
       run: |
