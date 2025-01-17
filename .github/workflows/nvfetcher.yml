@@ -1,0 +1,44 @@
+name: Automatically update
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '0 */2 * * *'
+
+jobs:
+  nvfetcher:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+          fetch-depth: 0
+    - name: Cache nvfetcher
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/share/nvfetcher
+        key: ${{ runner.os }}-nvfetcher
+    - uses: cachix/install-nix-action@v27
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+    # - uses: cachix/cachix-action@v15
+    #   with:
+    #     name: konecho
+    #     authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+    - name: Run nvfetcher
+      run: |
+        nix run nixpkgs#nvfetcher 
+
+    - name: Run flake check
+      run: |
+        nix flake check
+        nix develop
+        python update.py
+        
+    - name: Commit changes
+      if: ${{ env.COMMIT_MSG != null }}
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: ${{ env.COMMIT_MSG }}
