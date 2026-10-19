@@ -52,11 +52,20 @@
 uv sync                 # 创建 .venv 并安装运行时 + 开发依赖
 uv run main.py          # 启动
 uv run pytest           # 运行测试
-uv run black .          # 格式化
-uv run ruff check .     # 静态检查
+uv run black xdnmb/scroll.py tests   # 格式化新增代码
+uv run ruff check xdnmb/scroll.py tests  # 静态检查新增代码
 ```
 
 图片预览功能依赖系统命令 `chafa`，请通过发行版包管理器安装（例如 `nix shell nixpkgs#chafa`）。
+
+## 操作提示
+
+在串内阅读时：
+
+* `j` / `k`（或 `↓` / `↑`）：按行滚动内容，长回复也能完整阅读。
+* `J` / `K`（或 `Shift+↓` / `Shift+↑`）：跳到下 / 上一个回复，并把该回复对齐到顶部。
+* `Ctrl+D` / `Ctrl+B`：向下 / 向上翻半页。
+* `PgDn`（`l`）/ `PgUp`（`h`）仍然是版面 / 串的翻页。
 
 ## 基本介绍
 
@@ -66,7 +75,7 @@ uv run ruff check .     # 静态检查
 
 不管怎么说，在命令行里刷岛这件事本身已经非常炫酷了 ᕕ( ᐛ )ᕗ
 
-* 执行 `python main.py` 就可以启动了，在此之前不要忘了 `pip install -r requirements.txt`，需要使用 Python 3.10 或以上的版本。
+* 执行 `uv run main.py` 就可以启动了（也可以 `pip install -r requirements.txt` 后执行 `python main.py`），需要使用 Python 3.10 或以上的版本。
 * 你也可以手动在 `PATH` 下创建一个用于快速启动的脚本。例如，想要在终端输入 `xdcmd` 直接启动此项目：
   * Windows：`(echo @echo off & echo python /path/to/xdcmd/main.py %*) > %SystemRoot%\xdcmd.cmd`
   * Linux：`(echo '#!/bin/sh\npython3 /path/to/xdcmd/main.py "$@"' > /usr/local/bin/xdcmd) && chmod +x /usr/local/bin/xdcmd`

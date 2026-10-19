@@ -10,6 +10,7 @@ import typing
 import xdnmb.action
 import xdnmb.api
 import xdnmb.model
+import xdnmb.scroll
 import xdnmb.util
 
 from concurrent.futures import ThreadPoolExecutor
@@ -626,7 +627,7 @@ def titleControlContainer() -> Container:
 
 titleControl = DynamicContainer(titleControlContainer)
 forumGroupControl = ScrollablePane(DynamicContainer(forumGroupControlContainer))
-forumContentControl = ScrollablePane(DynamicContainer(forumContentControlContainer))
+forumContentControl = xdnmb.scroll.ContentScrollablePane(DynamicContainer(forumContentControlContainer))
 
 container = FloatContainer(
     HSplit((
@@ -644,7 +645,8 @@ container = FloatContainer(
                 Label(text=HTML('<content-rev>[{0}]</content-rev>{1}').format(k, d), style='class:content')
                 for k, d in (
                     ('Ctrl+E' if is_mac else 'Alt+E', '退出'),
-                    ('↑(k)/↓(j)', '选择版面/串'),
+                    ('↑(k)/↓(j)', '选择版面/串/滚动'),
+                    ('J/K', '选择回复'),
                     ('Enter', '查看版面/串'),
                     ('PgUp(h)/PgDn(l)', '翻页'),
                     ('Ctrl+P' if is_mac else 'Alt+P', '串内跳页'),
@@ -654,6 +656,7 @@ container = FloatContainer(
             VSplit(tuple(
                 Label(text=HTML('<content-rev>[{0}]</content-rev>{1}').format(k, d), style='class:content')
                 for k, d in (
+                    ('Ctrl+D/B', '翻半页'),
                     ('Ctrl+Q' if is_mac else 'Alt+Q', '从串返回版面'),
                     ('Ctrl+N' if is_mac else 'Alt+N', '发串/回复'),
                     ('Ctrl+R' if is_mac else 'Alt+M', '查看版规'),
@@ -677,15 +680,79 @@ layout = Layout(container)
 keyBinding = KeyBindings()
 
 condition = Condition(lambda: not (len(container.floats) > 1 or showReplyForm))
+
+def focusVisibleButton(applied: int) -> None:
+    # 让焦点跟随当前可见的回复，这样 J/K 会从正在看的回复开始跳转。
+    window = forumContentControl.visible_button(applied)
+    if window is not None:
+        layout.focus(window)
+
+def scrollContent(delta: int) -> None:
+    focusVisibleButton(forumContentControl.scroll_lines(delta))
+
+def scrollContentHalfPage(direction: int) -> None:
+    focusVisibleButton(forumContentControl.scroll_half_page(direction))
+
+def focusThreadButton(direction: int) -> None:
+    windows = [
+        w for w in layout.get_focusable_windows()
+        if getattr(w, 'buttonType', None) in (
+            xdnmb.model.ButtonType.Thread,
+            xdnmb.model.ButtonType.Reply,
+        )
+    ]
+    if not windows:
+        return
+    try:
+        index = windows.index(layout.current_window)
+    except ValueError:
+        index = 0 if direction > 0 else len(windows) - 1
+    else:
+        index = max(0, min(len(windows) - 1, index + direction))
+    layout.focus(windows[index])
+    forumContentControl.align_window_top(layout.current_window)
+
 @keyBinding.add('up', filter=condition)
 @keyBinding.add('k', filter=condition)
 def _(e):
-    focus_previous(e)
+    if thread:
+        scrollContent(-1)
+    else:
+        focus_previous(e)
 
 @keyBinding.add('down', filter=condition)
 @keyBinding.add('j', filter=condition)
 def _(e):
-    focus_next(e)
+    if thread:
+        scrollContent(1)
+    else:
+        focus_next(e)
+
+@keyBinding.add('s-up', filter=condition)
+@keyBinding.add('K', filter=condition)
+def _(e):
+    if thread:
+        focusThreadButton(-1)
+    else:
+        focus_previous(e)
+
+@keyBinding.add('s-down', filter=condition)
+@keyBinding.add('J', filter=condition)
+def _(e):
+    if thread:
+        focusThreadButton(1)
+    else:
+        focus_next(e)
+
+@keyBinding.add('c-d', filter=condition)
+def _(e):
+    if thread:
+        scrollContentHalfPage(1)
+
+@keyBinding.add('c-b', filter=condition)
+def _(e):
+    if thread:
+        scrollContentHalfPage(-1)
 
 @ (keyBinding.add('c-e') if is_mac else keyBinding.add('escape', 'e'))
 def _(e): 
@@ -740,6 +807,7 @@ def _(e: KeyPressEvent):
         (xdnmb.model.ButtonType.Reply, xdnmb.model.ButtonType.Thread),
     ):
         if xdnmb.util.focusToButton(focusFrom, focusTo):
+            forumContentControl.reveal_window(layout.current_window)
             return
 
 # c-m represents enter
