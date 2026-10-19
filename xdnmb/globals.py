@@ -798,16 +798,19 @@ def _(e: KeyPressEvent):
         if forumPage <= 1:
             xdnmb.util.floatAlert('别翻啦', f'这已经是第 1 页了⊂彡☆))∀`)')
             return
+        wasInForumList = focusInForumList()
         xdnmb.action.loadForum(forum, forumPage - 1)
-        xdnmb.util.focusToButton(None, xdnmb.model.ButtonType.Thread)
+        if not wasInForumList and forumThreads:
+            xdnmb.util.focusToContainerButton(
+                forumThreads[0].__pt_container__(),
+                xdnmb.model.ButtonType.Thread,
+            )
     else:
         global threadPage
         if threadPage <= 1:
             xdnmb.util.floatAlert('别翻啦', f'这已经是第 1 页了⊂彡☆))∀`)')
             return
         xdnmb.action.loadThread(thread, threadPage - 1)
-        xdnmb.util.focusToButton(None, xdnmb.model.ButtonType.Forum)
-    xdnmb.util.focusToButton(None, xdnmb.model.ButtonType.Forum)
 
 @keyBinding.add('pagedown')
 @keyBinding.add('l', filter=condition)
@@ -818,7 +821,13 @@ def _(e: KeyPressEvent):
         if (isinstance(forum, xdnmb.model.Timeline)) and forumPage >= forum.maxPage:
             xdnmb.util.floatAlert('我真的……一条都没有了', f'你已经翻到了时间线“{forum.name}”的底部（页数上限为 {forum.maxPage} 页）')
             return
+        wasInForumList = focusInForumList()
         xdnmb.action.loadForum(forum, forumPage + 1)
+        if not wasInForumList and forumThreads:
+            xdnmb.util.focusToContainerButton(
+                forumThreads[0].__pt_container__(),
+                xdnmb.model.ButtonType.Thread,
+            )
     else:
         if threadPage >= thread.maxPage:
             xdnmb.util.floatAlert('我真的……一条都没有了', f'你已经翻到了这个串的最后一页')
@@ -854,9 +863,17 @@ def _(e: KeyPressEvent):
     global thread
     if not thread or len(container.floats) > 1 or showReplyForm:
         return
+    tid = thread.tid
     thread = None
     forumContentControl.vertical_scroll = 0
-    xdnmb.util.focusToButton(None, xdnmb.model.ButtonType.Forum)
+    target = next(
+        (t for t in forumThreads if t.tid == tid),
+        forumThreads[0] if forumThreads else None,
+    )
+    if not (target and xdnmb.util.focusToContainerButton(
+            target.__pt_container__(),
+            xdnmb.model.ButtonType.Thread)):
+        xdnmb.util.focusToButton(None, xdnmb.model.ButtonType.Forum)
 
 @ (keyBinding.add('c-p') if is_mac else keyBinding.add('escape', 'p'))
 def _(e: KeyPressEvent):

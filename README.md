@@ -68,6 +68,8 @@ uv run ruff check xdnmb/scroll.py tests  # 静态检查新增代码
 * 串内 `J` / `K`（或 `Shift+↓` / `Shift+↑`）：跳到下 / 上一个回复，并把该回复对齐到顶部。
 * `Ctrl+D` / `Ctrl+B`：向下 / 向上翻半页。
 * `PgDn`（`l`）/ `PgUp`（`h`）仍然是版面 / 串的翻页。
+* 打开串后焦点留在右侧串内容；`Alt+Q` 返回版面时焦点留在右侧串列表，并尽量选中刚才阅读的串。
+* 左右分栏之间用 `Tab` / `Shift+Tab` 切换。
 
 ## 基本介绍
 

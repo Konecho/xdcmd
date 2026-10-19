@@ -50,4 +50,7 @@ def loadThread(thread: xdnmb.model.Thread, page: int = 1):
     xdnmb.globals.thread = xdnmb.api.getThread(thread, page)
     xdnmb.globals.threadPage = page
     xdnmb.globals.forumContentControl.vertical_scroll = 0
-    xdnmb.util.focusToButton(None, xdnmb.model.ButtonType.Forum)
+    if not xdnmb.util.focusToContainerButton(
+            xdnmb.globals.thread.__pt_container__(),
+            xdnmb.model.ButtonType.Thread):
+        xdnmb.util.focusToButton(None, xdnmb.model.ButtonType.Forum)

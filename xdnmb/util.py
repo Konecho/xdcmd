@@ -157,6 +157,30 @@ def focusToButton(focusFrom: xdnmb.model.ButtonType | None,
     return False
 
 
+def focusToContainerButton(container,
+                           focusTo: xdnmb.model.ButtonType) -> bool:
+    """Focus the first button of the given type inside *container*.
+
+    Unlike :func:`focusToButton`, this does not depend on the last rendered
+    screen, so it can be used immediately after replacing the content.
+    """
+    from prompt_toolkit.layout.containers import Window
+    from prompt_toolkit.layout.containers import to_container
+
+    def walk(c):
+        if isinstance(c, Window):
+            yield c
+        for child in c.get_children():
+            yield from walk(child)
+
+    for window in walk(to_container(container)):
+        if getattr(window, 'buttonType',
+                   xdnmb.model.ButtonType.Dummy) == focusTo:
+            xdnmb.globals.layout.focus(window)
+            return True
+    return False
+
+
 # Chafa: Terminal Graphics for the 21st Century
 # https://hpjansson.org/chafa/
 
