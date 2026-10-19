@@ -686,6 +686,12 @@ keyBinding = KeyBindings()
 
 condition = Condition(lambda: not (len(container.floats) > 1 or showReplyForm))
 
+def focusInForumList() -> bool:
+    return (
+        getattr(layout.current_window, 'buttonType', None)
+        == xdnmb.model.ButtonType.Forum
+    )
+
 def focusVisibleButton(applied: int) -> None:
     # 让焦点跟随当前可见的回复，这样 J/K 会从正在看的回复开始跳转。
     window = forumContentControl.visible_button(applied)
@@ -720,7 +726,7 @@ def focusThreadButton(direction: int) -> None:
 @keyBinding.add('up', filter=condition)
 @keyBinding.add('k', filter=condition)
 def _(e):
-    if thread:
+    if thread and not focusInForumList():
         scrollContent(-1)
     else:
         focus_previous(e)
@@ -728,7 +734,7 @@ def _(e):
 @keyBinding.add('down', filter=condition)
 @keyBinding.add('j', filter=condition)
 def _(e):
-    if thread:
+    if thread and not focusInForumList():
         scrollContent(1)
     else:
         focus_next(e)
