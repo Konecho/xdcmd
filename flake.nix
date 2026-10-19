@@ -23,9 +23,6 @@
       default = xdcmd;
     });
 
-    # 兼容旧的 `nix build .#defaultPackage` 用法。
-    defaultPackage = forAllSystems (pkgs: self.packages.${pkgs.system}.default);
-
     devShells = forAllSystems (pkgs: {
       default = pkgs.mkShell {
         packages = [
