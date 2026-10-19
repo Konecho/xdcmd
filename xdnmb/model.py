@@ -43,6 +43,7 @@ class Forum:
             handler=functools.partial(xdnmb.action.loadForum, self)
         )
         b.window.align = WindowAlign.LEFT
+        b.window.content.show_cursor = False
         setattr(b.window, 'buttonType', ButtonType.Forum)
         return b.window
 
@@ -63,6 +64,7 @@ class Timeline:
             handler=functools.partial(xdnmb.action.loadForum, self)
         )
         b.window.align = WindowAlign.LEFT
+        b.window.content.show_cursor = False
         setattr(b.window, 'buttonType', ButtonType.Forum)
         return b.window
 
@@ -85,6 +87,7 @@ class Feed:
             handler=functools.partial(xdnmb.action.loadForum, self)
         )
         b.window.align = WindowAlign.LEFT
+        b.window.content.show_cursor = False
         setattr(b.window, 'buttonType', ButtonType.Forum)
         return b.window
 
@@ -191,6 +194,7 @@ class Reply:
             width=len(f'No.{self.tid}'),
         )
         b.window.align = WindowAlign.LEFT
+        b.window.content.show_cursor = False
         setattr(b.window, 'buttonType', ButtonType.Reply)
         children: list[Container] = [
             VSplit((
@@ -263,6 +267,7 @@ class Thread(Reply):
             handler=functools.partial(xdnmb.action.loadThread, self),
         )
         b.window.align = WindowAlign.LEFT
+        b.window.content.show_cursor = False
         setattr(b.window, 'buttonType', ButtonType.Thread)
         children: list[Container] = [
             VSplit((
