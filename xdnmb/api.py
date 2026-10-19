@@ -235,7 +235,11 @@ def getFeed(page: int = 1) -> tuple[xdnmb.model.Thread, ...]:
     for threadRaw in r.json():
         threads.append(xdnmb.model.Thread(
             tid=int(threadRaw['id']),
-            replyCount=int(threadRaw['reply_count']),
+            replyCount=(
+                int(threadRaw['reply_count'])
+                if threadRaw.get('reply_count') not in (None, '') else
+                None
+            ),
             img=(
                 (CDN_PATH + 'image/' + threadRaw['img'] + threadRaw['ext'])
                 if threadRaw['img'] and threadRaw['ext']
@@ -252,7 +256,7 @@ def getFeed(page: int = 1) -> tuple[xdnmb.model.Thread, ...]:
             title=threadRaw['title'] or '无标题',
             content=xdnmb.util.stripHTML(threadRaw['content']),
             sage=False,
-            admin=bool(int(threadRaw['admin'])),
+            admin=bool(int(threadRaw.get('admin') or 0)),
             forum=next(
                 (forum for forum in xdnmb.globals.forums if forum.fid == int(threadRaw['fid'])),
                 None,

@@ -316,7 +316,8 @@ class Thread(Reply):
             except Exception as ex:
                 children.append(Label(f'⚠️ 图片加载失败：{type(ex).__name__}: {ex}', style='class:tips'))
             children.append(Label(f'🖼️ 附加图片：{self.img}', style='class:tips'))
-        children.append(Label(f'➕ 回应共有 {self.replyCount} 篇', style='class:tips'))
+        if self.replyCount is not None:
+            children.append(Label(f'➕ 回应共有 {self.replyCount} 篇', style='class:tips'))
         children.append(Window(height=1))
         if self.replies:
             for reply in self.replies:
