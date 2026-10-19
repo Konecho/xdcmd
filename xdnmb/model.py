@@ -223,12 +223,16 @@ class Reply:
         children: list[Container] = [
             VSplit((
                 Label(
-                    HTML('<title>{0}</title> <name>{1}</name> {2} ').format(
+                    HTML('<title>{0}</title> <name>{1}</name> ').format(
                         self.title,
                         self.name,
-                        timestamp,
                     ),
                     dont_extend_width=True,
+                ),
+                Label(
+                    timestamp + ' ',
+                    width=Dimension.exact(get_cwidth(timestamp + ' ')),
+                    wrap_lines=False,
                 ),
                 Label(
                     idFormatted,
@@ -305,12 +309,16 @@ class Thread(Reply):
         children: list[Container] = [
             VSplit((
                 Label(
-                    HTML('<title>{0}</title> <name>{1}</name> {2} ').format(
+                    HTML('<title>{0}</title> <name>{1}</name> ').format(
                         self.title,
                         self.name,
-                        timestamp,
                     ),
                     dont_extend_width=True,
+                ),
+                Label(
+                    timestamp + ' ',
+                    width=Dimension.exact(get_cwidth(timestamp + ' ')),
+                    wrap_lines=False,
                 ),
                 Label(
                     idFormatted,
