@@ -629,6 +629,9 @@ titleControl = DynamicContainer(titleControlContainer)
 forumGroupControl = ScrollablePane(DynamicContainer(forumGroupControlContainer))
 forumContentControl = xdnmb.scroll.ContentScrollablePane(
     DynamicContainer(forumContentControlContainer),
+    # 版面中的串列表靠焦点移动来浏览，需要自动跟随焦点；
+    # 进入串内后改为手动滚动，这样长回复才不会被焦点拉回去。
+    keep_focused_window_visible=Condition(lambda: thread is None),
     # 阅读时不要因为焦点按钮的“光标”位置而限制滚动范围；
     # 打开发串/回复表单时仍然让光标保持可见。
     keep_cursor_visible=Condition(lambda: showReplyForm),
@@ -651,7 +654,7 @@ container = FloatContainer(
                 for k, d in (
                     ('Ctrl+E' if is_mac else 'Alt+E', '退出'),
                     ('↑(k)/↓(j)', '选择版面/串/滚动'),
-                    ('J/K', '选择回复'),
+                    ('J/K', '选择串/回复'),
                     ('Enter', '查看版面/串'),
                     ('PgUp(h)/PgDn(l)', '翻页'),
                     ('Ctrl+P' if is_mac else 'Alt+P', '串内跳页'),
@@ -704,16 +707,13 @@ def scrollContent(delta: int) -> None:
 def scrollContentHalfPage(direction: int) -> None:
     focusVisibleButton(forumContentControl.scroll_half_page(direction))
 
-def focusThreadButton(direction: int) -> None:
+def focusButton(buttonTypes: tuple[xdnmb.model.ButtonType, ...], direction: int) -> bool:
     windows = [
         w for w in layout.get_focusable_windows()
-        if getattr(w, 'buttonType', None) in (
-            xdnmb.model.ButtonType.Thread,
-            xdnmb.model.ButtonType.Reply,
-        )
+        if getattr(w, 'buttonType', None) in buttonTypes
     ]
     if not windows:
-        return
+        return False
     try:
         index = windows.index(layout.current_window)
     except ValueError:
@@ -721,37 +721,55 @@ def focusThreadButton(direction: int) -> None:
     else:
         index = max(0, min(len(windows) - 1, index + direction))
     layout.focus(windows[index])
-    forumContentControl.align_window_top(layout.current_window)
+    return True
+
+def focusForumButton(direction: int) -> None:
+    focusButton((xdnmb.model.ButtonType.Forum,), direction)
+
+def focusContentButton(direction: int) -> None:
+    if focusButton((
+        xdnmb.model.ButtonType.Thread,
+        xdnmb.model.ButtonType.Reply,
+    ), direction):
+        forumContentControl.align_window_top(layout.current_window)
 
 @keyBinding.add('up', filter=condition)
 @keyBinding.add('k', filter=condition)
 def _(e):
-    if thread and not focusInForumList():
+    if focusInForumList():
+        focusForumButton(-1)
+    elif thread:
         scrollContent(-1)
+    elif forum:
+        focusContentButton(-1)
     else:
         focus_previous(e)
 
 @keyBinding.add('down', filter=condition)
 @keyBinding.add('j', filter=condition)
 def _(e):
-    if thread and not focusInForumList():
+    if focusInForumList():
+        focusForumButton(1)
+    elif thread:
         scrollContent(1)
+    elif forum:
+        focusContentButton(1)
     else:
         focus_next(e)
 
 @keyBinding.add('s-up', filter=condition)
 @keyBinding.add('K', filter=condition)
 def _(e):
-    if thread:
-        focusThreadButton(-1)
+    if thread or forum:
+        focusContentButton(-1)
     else:
         focus_previous(e)
 
 @keyBinding.add('s-down', filter=condition)
 @keyBinding.add('J', filter=condition)
 def _(e):
-    if thread:
-        focusThreadButton(1)
+    if thread or forum:
+        focusContentButton(1)
     else:
         focus_next(e)
 
