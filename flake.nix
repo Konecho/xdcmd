@@ -1,6 +1,9 @@
 {
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-  outputs = inputs: let
+  outputs = {
+    self,
+    nixpkgs,
+  }: let
     systems = [
       "x86_64-linux"
       "i686-linux"
@@ -10,42 +13,41 @@
       "armv7l-linux"
     ];
     forAllSystems = f:
-      inputs.nixpkgs.lib.genAttrs systems
-      (system: f inputs.nixpkgs.legacyPackages.${system});
+      nixpkgs.lib.genAttrs systems
+      (system: f nixpkgs.legacyPackages.${system});
   in {
-    devShells = forAllSystems (pkgs: {
+    packages = forAllSystems (pkgs: let
+      xdcmd = pkgs.callPackage ./nix/package.nix {src = self;};
+    in {
+      inherit xdcmd;
+      default = xdcmd;
+    });
+
+    # 兼容旧的 `nix build .#defaultPackage` 用法。
+    defaultPackage = forAllSystems (pkgs: self.packages.${pkgs.system}.default);
+
+    devShells = forAllSystems (pkgs: let
+      python = pkgs.python3.withPackages (p:
+        with p; [
+          pygments
+          python-lsp-server
+          black
+          pytest
+          # 运行时依赖
+          beautifulsoup4
+          requests
+          prompt-toolkit
+          wcwidth
+        ]);
+    in {
       default = pkgs.mkShell {
-        packages = with pkgs; [
-          (python3.withPackages (
-            p:
-              with p; [
-                pygments
-                python-lsp-server
-                black
-                pytest
-                # deps
-                beautifulsoup4
-                requests
-                prompt-toolkit
-                wcwidth
-              ]
-          ))
-          chafa
-          nvfetcher
+        packages = [
+          python
+          pkgs.chafa
         ];
       };
     });
-    defaultPackage = forAllSystems (pkgs: let
-      source = (import ./_sources/generated.nix) {
-        inherit
-          (pkgs)
-          fetchgit
-          fetchurl
-          fetchFromGitHub
-          dockerTools
-          ;
-      };
-    in
-      pkgs.callPackage ./xdcmd.nix {source = source.xdcmd;});
+
+    formatter = forAllSystems (pkgs: pkgs.nixfmt-rfc-style);
   };
 }
