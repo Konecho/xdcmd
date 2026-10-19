@@ -135,3 +135,8 @@ dmypy.json
 cython_debug/
 
 config.ini
+
+# Nix
+.direnv
+.envrc
+result

@@ -6,6 +6,8 @@
 
 用户反馈和技术支持集中串：[No.50750950](https://nmbxd.com/t/50750950)
 
+> 本仓库是 [TransparentLC/xdcmd](https://github.com/TransparentLC/xdcmd) 的 fork。上游长期没有更新，因此本 fork 作为后续开发主线，并让上游源码与 Nix 打包环境共存于同一仓库。
+
 ![](https://user-images.githubusercontent.com/47057319/182030427-6c75ec92-f808-4cbc-8102-2c868db33093.png)
 
 ## 快速安装
@@ -31,6 +33,16 @@
       * ![RockyLinux 9](https://img.shields.io/badge/RockyLinux-9-1b8?logo=rockylinux)
   * `xdcmd-ubuntu` 原始的打包产物，**不知道该下载哪个的话就选这个吧**。
   * `xdcmd-ubuntu-onefile` 单文件版，实际上是在运行的时候将主程序什么的自解压到临时目录。
+
+## Nix
+
+本仓库自带 Nix flake，会直接打包仓库中的源码（包括本地修改）。
+
+* `nix run .`：直接运行。
+* `nix build`：构建后运行 `result/bin/xdcmd`。
+* `nix develop`：进入包含 Python、chafa 和开发工具的 shell。
+
+传递给程序的参数需要放在 `--` 之后，例如 `nix run . -- -h`。
 
 ## 基本介绍
 

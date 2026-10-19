@@ -1,0 +1,3 @@
+[xdcmd]
+src.git = "https://github.com/TransparentLC/xdcmd.git"
+fetch.git = "https://github.com/TransparentLC/xdcmd.git"
