@@ -1,0 +1,30 @@
+[project]
+name = "xdcmd"
+version = "0.1.0"
+description = "X 岛匿名版命令行客户端"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "AGPL-3.0-only"
+dependencies = [
+  "beautifulsoup4>=4.12,<5",
+  "prompt-toolkit>=3.0.30,<4",
+  "requests>=2.31,<3",
+  "wcwidth>=0.2,<0.3",
+]
+
+[dependency-groups]
+dev = [
+  "black>=24",
+  "pygments>=2.17",
+  "pytest>=8",
+  "python-lsp-server>=1.10",
+  "ruff>=0.9",
+]
+
+[tool.uv]
+# 源码不是可安装的 Python 包（没有 setup.py / build backend），
+# 只把依赖安装到 .venv，然后通过 `uv run main.py` 运行。
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -44,6 +44,20 @@
 
 传递给程序的参数需要放在 `--` 之后，例如 `nix run . -- -h`。
 
+## 从源码开发（uv）
+
+开发环境使用 [uv](https://docs.astral.sh/uv/) 管理，依赖声明在 `pyproject.toml`，锁文件为 `uv.lock`。
+
+```bash
+uv sync                 # 创建 .venv 并安装运行时 + 开发依赖
+uv run main.py          # 启动
+uv run pytest           # 运行测试
+uv run black .          # 格式化
+uv run ruff check .     # 静态检查
+```
+
+图片预览功能依赖系统命令 `chafa`，请通过发行版包管理器安装（例如 `nix shell nixpkgs#chafa`）。
+
 ## 基本介绍
 
 “在命令行的环境下重现 X 岛网页版的刷岛体验”，原本只是这么一个很简单的想法，在做出初步的原型然后发到岛上之后意外地很受肥肥们的欢迎，于是就继续把完整版做出来了 (\*´ω`\*)

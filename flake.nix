@@ -26,25 +26,18 @@
     # 兼容旧的 `nix build .#defaultPackage` 用法。
     defaultPackage = forAllSystems (pkgs: self.packages.${pkgs.system}.default);
 
-    devShells = forAllSystems (pkgs: let
-      python = pkgs.python3.withPackages (p:
-        with p; [
-          pygments
-          python-lsp-server
-          black
-          pytest
-          # 运行时依赖
-          beautifulsoup4
-          requests
-          prompt-toolkit
-          wcwidth
-        ]);
-    in {
+    devShells = forAllSystems (pkgs: {
       default = pkgs.mkShell {
         packages = [
-          python
+          pkgs.uv
+          pkgs.python3
           pkgs.chafa
+          pkgs.git
         ];
+        env = {
+          # 使用 shell 中的 Python，不让 uv 另外下载解释器。
+          UV_PYTHON_PREFERENCE = "only-system";
+        };
       };
     });
 
