@@ -627,7 +627,12 @@ def titleControlContainer() -> Container:
 
 titleControl = DynamicContainer(titleControlContainer)
 forumGroupControl = ScrollablePane(DynamicContainer(forumGroupControlContainer))
-forumContentControl = xdnmb.scroll.ContentScrollablePane(DynamicContainer(forumContentControlContainer))
+forumContentControl = xdnmb.scroll.ContentScrollablePane(
+    DynamicContainer(forumContentControlContainer),
+    # 阅读时不要因为焦点按钮的“光标”位置而限制滚动范围；
+    # 打开发串/回复表单时仍然让光标保持可见。
+    keep_cursor_visible=Condition(lambda: showReplyForm),
+)
 
 container = FloatContainer(
     HSplit((

@@ -56,3 +56,14 @@ def test_content_scrollable_pane_page_size():
 
     pane = make_pane(height=12)
     assert pane.page_size == 10
+
+
+def test_content_scrollable_pane_does_not_follow_focus_or_cursor():
+    pane = ContentScrollablePane(Window())
+    assert not pane.keep_focused_window_visible()
+    assert not pane.keep_cursor_visible()
+
+
+def test_content_scrollable_pane_can_keep_cursor_visible():
+    pane = ContentScrollablePane(Window(), keep_cursor_visible=True)
+    assert pane.keep_cursor_visible()

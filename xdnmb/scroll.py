@@ -47,6 +47,7 @@ class ContentScrollablePane(ScrollablePane):
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("keep_focused_window_visible", False)
+        kwargs.setdefault("keep_cursor_visible", False)
         super().__init__(*args, **kwargs)
         self.last_write_position: WritePosition | None = None
         self.content_height = 0
