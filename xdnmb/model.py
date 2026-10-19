@@ -259,7 +259,7 @@ class Thread(Reply):
         import xdnmb.util
 
         text = (
-            f'▶No.{self.tid}'
+            f'串内No.{self.tid}'
             if xdnmb.globals.thread is self else
             f'No.{self.tid}'
         )
