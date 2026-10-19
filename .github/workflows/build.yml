@@ -2,9 +2,10 @@ name: build
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
+  # Temporarily disabled automatic builds. Uncomment to re-enable.
+  # push:
+  #   branches:
+  #     - master
 
 jobs:
   build-windows:

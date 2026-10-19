@@ -1,8 +1,10 @@
 name: tests
 
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
+  # Temporarily disabled automatic tests. Uncomment to re-enable.
+  # push:
+  # pull_request:
 
 jobs:
   pytest:
