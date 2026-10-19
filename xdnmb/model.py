@@ -49,6 +49,8 @@ class Forum:
         )
         b.window.align = WindowAlign.LEFT
         setattr(b.window, 'buttonType', ButtonType.Forum)
+        self.button = b
+        b._baseText = b.text
         return b.window
 
 @dataclasses.dataclass(unsafe_hash=True)
@@ -69,6 +71,8 @@ class Timeline:
         )
         b.window.align = WindowAlign.LEFT
         setattr(b.window, 'buttonType', ButtonType.Forum)
+        self.button = b
+        b._baseText = b.text
         return b.window
 
 @dataclasses.dataclass(unsafe_hash=True)
@@ -92,6 +96,7 @@ class Feed:
         b.window.align = WindowAlign.LEFT
         setattr(b.window, 'buttonType', ButtonType.Forum)
         self.button = b
+        b._baseText = b.text
         return b.window
 
 @dataclasses.dataclass(unsafe_hash=True)

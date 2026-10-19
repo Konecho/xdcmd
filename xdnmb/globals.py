@@ -42,6 +42,7 @@ from prompt_toolkit.widgets import Checkbox
 from prompt_toolkit.widgets import Dialog
 from prompt_toolkit.widgets import Frame
 from prompt_toolkit.widgets import Label
+from prompt_toolkit.utils import get_cwidth
 from prompt_toolkit.widgets import TextArea
 
 try:
@@ -535,29 +536,36 @@ for textarea in (
 
 imagePreloadExecutor = ThreadPoolExecutor()
 
+currentNavButton = None
+
+def updateNavPage():
+    global currentNavButton
+    if currentNavButton is not None:
+        currentNavButton.text = getattr(
+            currentNavButton, '_baseText', currentNavButton.text
+        )
+        currentNavButton = None
+
+    if thread is not None or not forum or not forumPage:
+        return
+
+    button = getattr(forum, 'button', None)
+    if button is None:
+        return
+
+    base = getattr(button, '_baseText', button.text).rstrip()
+    page = f' {forumPage}'
+    if get_cwidth(base + page) <= 20:
+        button.text = base + page
+        currentNavButton = button
+
 def forumGroupControlContainer() -> Container:
-    updateFeedNavButton()
+    updateNavPage()
     return HSplit(
         forumGroups if forumGroups else tuple(),
         width=20,
         style='class:nav',
     )
-
-def updateFeedNavButton():
-    feed = next(
-        (f for group in forumGroups for f in group.forums
-         if isinstance(f, xdnmb.model.Feed)),
-        None,
-    )
-    button = getattr(feed, 'button', None)
-    if button is None:
-        return
-    page = (
-        f' {forumPage}'
-        if thread is None and isinstance(forum, xdnmb.model.Feed) and forumPage
-        else ''
-    )
-    button.text = f'  订阅的串{page}'
 
 def forumContentControlContainer() -> Container:
     updateForumBottomButton()
