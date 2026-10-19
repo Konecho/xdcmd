@@ -8,6 +8,7 @@ import re
 import wcwidth
 import xdnmb.action
 import xdnmb.scroll
+import xdnmb.text
 
 from prompt_toolkit.formatted_text import ANSI
 from prompt_toolkit.formatted_text import HTML
@@ -230,8 +231,10 @@ class Reply:
             VSplit((
                 Label(
                     HTML('<title>{0}</title> <name>{1}</name> ').format(
-                        self.title,
-                        self.name,
+                        html.escape(
+                            xdnmb.text.strip_invalid_xml_chars(self.title)),
+                        html.escape(
+                            xdnmb.text.strip_invalid_xml_chars(self.name)),
                     ),
                     dont_extend_width=True,
                 ),
@@ -252,7 +255,7 @@ class Reply:
         children.append(Label(HTML(re.sub(
             r'(?:(?:&gt;){1,2}|&gt;&gt;No\.)\d+|^(?:&gt;|＞).+$',
             lambda m: f'<reference>{m.group(0)}</reference>',
-            html.escape(self.content),
+            html.escape(xdnmb.text.strip_invalid_xml_chars(self.content)),
             0, re.M,
         ))))
         if self.img:
@@ -316,8 +319,10 @@ class Thread(Reply):
             VSplit((
                 Label(
                     HTML('<title>{0}</title> <name>{1}</name> ').format(
-                        self.title,
-                        self.name,
+                        html.escape(
+                            xdnmb.text.strip_invalid_xml_chars(self.title)),
+                        html.escape(
+                            xdnmb.text.strip_invalid_xml_chars(self.name)),
                     ),
                     dont_extend_width=True,
                 ),
@@ -340,7 +345,7 @@ class Thread(Reply):
         children.append(Label(HTML(re.sub(
             r'(?:(?:&gt;){1,2}|&gt;&gt;No\.)\d+|^(?:&gt;|＞).+$',
             lambda m: f'<reference>{m.group(0)}</reference>',
-            html.escape(self.content),
+            html.escape(xdnmb.text.strip_invalid_xml_chars(self.content)),
             0, re.M,
         ))))
         if self.img:

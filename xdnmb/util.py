@@ -13,6 +13,7 @@ import warnings
 import xdnmb.api
 import xdnmb.globals
 import xdnmb.model
+import xdnmb.text
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
@@ -65,13 +66,16 @@ def lruCacheSet(key: str, value: bytes | None, rowLimit: int):
 
 def stripHTML(text: str | BeautifulSoup | Tag) -> str:
     if isinstance(text, (BeautifulSoup, Tag)):
-        return re.sub(r'^\s+|\s+$',
-                      '\n',
-                      text.text.replace('\r', ''),
-                      flags=re.M)
+        return xdnmb.text.strip_invalid_xml_chars(
+            re.sub(r'^\s+|\s+$',
+                   '\n',
+                   text.text.replace('\r', ''),
+                   flags=re.M))
+    text = xdnmb.text.strip_invalid_xml_chars(text)
     text = re.sub(r'<br ?/?>\r?\n?', '\n', text)
     text = re.sub(r'^\s+|\s+$', '\n', text, flags=re.M)
-    return BeautifulSoup(text, features='html.parser').text
+    return xdnmb.text.strip_invalid_xml_chars(
+        BeautifulSoup(text, features='html.parser').text)
 
 
 def parseThreadTime(text: str) -> datetime.datetime:
