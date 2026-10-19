@@ -475,6 +475,16 @@ homepageLabel = Label(text=ANSI(homepageLabelText), align=WindowAlign.CENTER)
 forumBottomButton = Button('按 PgUp(h)/PgDn(l) 翻页')
 forumBottomButton.window.always_hide_cursor = xdnmb.scroll.hide_cursor_when_scrolled_out(forumBottomButton.window)
 
+def updateForumBottomButton():
+    if thread and threadPage:
+        forumBottomButton.text = f'第 {threadPage}/{thread.maxPage} 页 · PgUp(h)/PgDn(l) 翻页'
+    elif forum and forumPage:
+        maxPage = getattr(forum, 'maxPage', None)
+        page = f'{forumPage}/{maxPage}' if maxPage else str(forumPage)
+        forumBottomButton.text = f'第 {page} 页 · PgUp(h)/PgDn(l) 翻页'
+    else:
+        forumBottomButton.text = '按 PgUp(h)/PgDn(l) 翻页'
+
 @xdnmb.util.floatAlertExceptionCatch
 def postThread():
     content = replyContentTextarea.text
@@ -533,6 +543,7 @@ def forumGroupControlContainer() -> Container:
     )
 
 def forumContentControlContainer() -> Container:
+    updateForumBottomButton()
     if showReplyForm:
         children = (
             VSplit((
