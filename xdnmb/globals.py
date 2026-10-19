@@ -646,7 +646,11 @@ container = FloatContainer(
         )),
         VSplit((
             forumGroupControl,
-            Window(width=1, char='|', style='class:divide'),
+            Window(
+                width=1,
+                char=lambda: '║' if thread else '|',
+                style='class:divide',
+            ),
             forumContentControl,
         )),
         *(() if config['Config'].getboolean('Simplify') else (

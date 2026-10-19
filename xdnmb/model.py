@@ -17,6 +17,7 @@ from prompt_toolkit.layout.containers import VSplit
 from prompt_toolkit.layout.containers import Window
 from prompt_toolkit.layout.containers import WindowAlign
 from prompt_toolkit.widgets import Button
+from prompt_toolkit.utils import get_cwidth
 from prompt_toolkit.widgets import Label
 
 class ButtonType(enum.IntEnum):
@@ -257,11 +258,16 @@ class Thread(Reply):
         import xdnmb.globals
         import xdnmb.util
 
+        text = (
+            f'▶No.{self.tid}'
+            if xdnmb.globals.thread is self else
+            f'No.{self.tid}'
+        )
         b = Button(
-            text=f'No.{self.tid}',
+            text=text,
             left_symbol='',
             right_symbol='',
-            width=len(f'No.{self.tid}'),
+            width=get_cwidth(text),
             handler=functools.partial(xdnmb.action.loadThread, self),
         )
         b.window.align = WindowAlign.LEFT
