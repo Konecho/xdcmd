@@ -893,7 +893,7 @@ def _(e: KeyPressEvent):
         except ValueError:
             return
         xdnmb.action.loadThread(thread, s)
-    xdnmb.util.floatPrompt('跳转页面', f'请输入页数（共 {thread.maxPage} 页）：', callback)
+    xdnmb.util.floatPrompt('跳转页面', f'当前第 {threadPage}/{thread.maxPage} 页，跳转到：', callback)
 
 @ (keyBinding.add('c-l') if is_mac else keyBinding.add('escape', 'l'))
 def _(e: KeyPressEvent):
