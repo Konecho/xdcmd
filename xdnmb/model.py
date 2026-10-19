@@ -91,6 +91,7 @@ class Feed:
         )
         b.window.align = WindowAlign.LEFT
         setattr(b.window, 'buttonType', ButtonType.Forum)
+        self.button = b
         return b.window
 
 @dataclasses.dataclass(unsafe_hash=True)

@@ -536,11 +536,28 @@ for textarea in (
 imagePreloadExecutor = ThreadPoolExecutor()
 
 def forumGroupControlContainer() -> Container:
+    updateFeedNavButton()
     return HSplit(
         forumGroups if forumGroups else tuple(),
         width=20,
         style='class:nav',
     )
+
+def updateFeedNavButton():
+    feed = next(
+        (f for group in forumGroups for f in group.forums
+         if isinstance(f, xdnmb.model.Feed)),
+        None,
+    )
+    button = getattr(feed, 'button', None)
+    if button is None:
+        return
+    page = (
+        f' {forumPage}'
+        if thread is None and isinstance(forum, xdnmb.model.Feed) and forumPage
+        else ''
+    )
+    button.text = f'  订阅的串{page}'
 
 def forumContentControlContainer() -> Container:
     updateForumBottomButton()
