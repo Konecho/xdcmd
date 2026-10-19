@@ -11,6 +11,9 @@ import xdnmb.scroll
 
 from prompt_toolkit.formatted_text import ANSI
 from prompt_toolkit.formatted_text import HTML
+from prompt_toolkit.formatted_text import fragment_list_to_text
+from prompt_toolkit.formatted_text import to_formatted_text
+from prompt_toolkit.layout import Dimension
 from prompt_toolkit.layout.containers import Container
 from prompt_toolkit.layout.containers import HSplit
 from prompt_toolkit.layout.containers import VSplit
@@ -195,33 +198,42 @@ class Reply:
         b.window.align = WindowAlign.LEFT
         b.window.always_hide_cursor = xdnmb.scroll.hide_cursor_when_scrolled_out(b.window)
         setattr(b.window, 'buttonType', ButtonType.Reply)
+        timestamp = self.now.strftime('%Y-%m-%d %H:%M:%S')
+        userHashText = (
+            '*' * len(self.userHash)
+            if (
+                xdnmb.globals.config['Config'].getboolean('HideCookie')
+                and not self.admin
+            )
+            else self.userHash
+        )
+        idFormatted = HTML(
+            'ID:' + (
+                '<admin>{0}</admin><name-admin>小会员</name-admin>'
+                '<admin>{0}</admin><name-admin>小会员</name-admin>'
+                if self.admin else
+                '{0}'
+            ) + (
+                '<name-po>(PO主)</name-po> '
+                if self.isPo else
+                ' '
+            )
+        ).format(userHashText)
+        idWidth = get_cwidth(fragment_list_to_text(to_formatted_text(idFormatted)))
         children: list[Container] = [
             VSplit((
                 Label(
-                    HTML(
-                        '<title>{0}</title> <name>{1}</name> {2} ID:' + (
-                            '<admin>{3}</admin><name-admin>小会员</name-admin>'
-                            if self.admin else
-                            '{3}'
-                        ) + (
-                            '<name-po>(PO主)</name-po> '
-                            if self.isPo else
-                            ' '
-                        )
-                    ).format(
+                    HTML('<title>{0}</title> <name>{1}</name> {2} ').format(
                         self.title,
                         self.name,
-                        self.now.strftime('%Y-%m-%d %H:%M:%S'),
-                        (
-                            '*' * len(self.userHash)
-                            if (
-                                xdnmb.globals.config['Config'].getboolean('HideCookie')
-                                and not self.admin
-                            )
-                            else self.userHash
-                        ),
+                        timestamp,
                     ),
                     dont_extend_width=True,
+                ),
+                Label(
+                    idFormatted,
+                    width=Dimension.exact(idWidth),
+                    wrap_lines=False,
                 ),
                 b,
                 Label(' '),
@@ -273,29 +285,37 @@ class Thread(Reply):
         b.window.align = WindowAlign.LEFT
         b.window.always_hide_cursor = xdnmb.scroll.hide_cursor_when_scrolled_out(b.window)
         setattr(b.window, 'buttonType', ButtonType.Thread)
+        timestamp = self.now.strftime('%Y-%m-%d %H:%M:%S')
+        userHashText = (
+            '*' * len(self.userHash)
+            if (
+                xdnmb.globals.config['Config'].getboolean('HideCookie')
+                and not self.admin
+            )
+            else self.userHash
+        )
+        idFormatted = HTML(
+            'ID:' + (
+                '<admin>{0}</admin><name-admin>小会员</name-admin> '
+                if self.admin else
+                '{0} '
+            )
+        ).format(userHashText)
+        idWidth = get_cwidth(fragment_list_to_text(to_formatted_text(idFormatted)))
         children: list[Container] = [
             VSplit((
                 Label(
-                    HTML(
-                        '<title>{0}</title> <name>{1}</name> {2} ID:' + (
-                            '<admin>{3}</admin><name-admin>小会员</name-admin> '
-                            if self.admin else
-                            '{3} '
-                        )
-                    ).format(
+                    HTML('<title>{0}</title> <name>{1}</name> {2} ').format(
                         self.title,
                         self.name,
-                        self.now.strftime('%Y-%m-%d %H:%M:%S'),
-                        (
-                            '*' * len(self.userHash)
-                            if (
-                                xdnmb.globals.config['Config'].getboolean('HideCookie')
-                                and not self.admin
-                            )
-                            else self.userHash
-                        ),
+                        timestamp,
                     ),
                     dont_extend_width=True,
+                ),
+                Label(
+                    idFormatted,
+                    width=Dimension.exact(idWidth),
+                    wrap_lines=False,
                 ),
                 b,
                 Label(f' [{self.forum.name}]'),
