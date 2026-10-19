@@ -473,7 +473,7 @@ except:
     pass
 homepageLabel = Label(text=ANSI(homepageLabelText), align=WindowAlign.CENTER)
 forumBottomButton = Button('按 PgUp(h)/PgDn(l) 翻页')
-forumBottomButton.window.content.show_cursor = False
+forumBottomButton.window.always_hide_cursor = xdnmb.scroll.hide_cursor_when_scrolled_out(forumBottomButton.window)
 
 @xdnmb.util.floatAlertExceptionCatch
 def postThread():
@@ -510,7 +510,7 @@ replyImageTextarea = TextArea(
 )
 replyWaterCheckbox = Checkbox('水印')
 replySendButton = Button('发送', handler=postThread)
-replySendButton.window.content.show_cursor = False
+replySendButton.window.always_hide_cursor = xdnmb.scroll.hide_cursor_when_scrolled_out(replySendButton.window)
 for textarea in (
     replyNameTextarea,
     replyTitleTextarea,

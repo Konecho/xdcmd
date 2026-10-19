@@ -7,6 +7,7 @@ import math
 import re
 import wcwidth
 import xdnmb.action
+import xdnmb.scroll
 
 from prompt_toolkit.formatted_text import ANSI
 from prompt_toolkit.formatted_text import HTML
@@ -191,7 +192,7 @@ class Reply:
             width=len(f'No.{self.tid}'),
         )
         b.window.align = WindowAlign.LEFT
-        b.window.content.show_cursor = False
+        b.window.always_hide_cursor = xdnmb.scroll.hide_cursor_when_scrolled_out(b.window)
         setattr(b.window, 'buttonType', ButtonType.Reply)
         children: list[Container] = [
             VSplit((
@@ -264,7 +265,7 @@ class Thread(Reply):
             handler=functools.partial(xdnmb.action.loadThread, self),
         )
         b.window.align = WindowAlign.LEFT
-        b.window.content.show_cursor = False
+        b.window.always_hide_cursor = xdnmb.scroll.hide_cursor_when_scrolled_out(b.window)
         setattr(b.window, 'buttonType', ButtonType.Thread)
         children: list[Container] = [
             VSplit((

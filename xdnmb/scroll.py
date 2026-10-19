@@ -35,6 +35,39 @@ def reveal_scroll_delta(
     return 0
 
 
+def is_scrolled_out(
+    y_offset: int, window_height: int, scroll: int, pane_height: int
+) -> bool:
+    return y_offset + window_height <= scroll or y_offset >= scroll + pane_height
+
+
+def hide_cursor_when_scrolled_out(window):
+    """Hide a button's text cursor when it is outside the content viewport.
+
+    prompt_toolkit would otherwise clamp the cursor of an off-screen button to
+    the terminal origin, where it appears over the forum list.
+    """
+    from prompt_toolkit.filters import Condition
+
+    def hidden() -> bool:
+        import xdnmb.globals
+
+        pane = getattr(xdnmb.globals, "forumContentControl", None)
+        info = getattr(window, "render_info", None)
+        position = getattr(pane, "last_write_position", None)
+        if info is None or position is None:
+            return False
+
+        return is_scrolled_out(
+            info._y_offset,
+            info.window_height,
+            pane.vertical_scroll,
+            position.height,
+        )
+
+    return Condition(hidden)
+
+
 class ContentScrollablePane(ScrollablePane):
     """A ScrollablePane that keeps its scroll position while the content is
     focused.

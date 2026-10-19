@@ -1,7 +1,12 @@
 from prompt_toolkit.layout import Window
 from prompt_toolkit.layout.screen import WritePosition
 
-from xdnmb.scroll import ContentScrollablePane, clamp_scroll, reveal_scroll_delta
+from xdnmb.scroll import (
+    ContentScrollablePane,
+    clamp_scroll,
+    is_scrolled_out,
+    reveal_scroll_delta,
+)
 
 
 def make_pane(height: int = 10, content_height: int = 100) -> ContentScrollablePane:
@@ -67,3 +72,12 @@ def test_content_scrollable_pane_does_not_follow_focus_or_cursor():
 def test_content_scrollable_pane_can_keep_cursor_visible():
     pane = ContentScrollablePane(Window(), keep_cursor_visible=True)
     assert pane.keep_cursor_visible()
+
+
+def test_is_scrolled_out():
+    # viewport: content lines 10..29
+    assert is_scrolled_out(0, 5, 10, 20) is True
+    assert is_scrolled_out(5, 10, 10, 20) is False
+    assert is_scrolled_out(10, 5, 10, 20) is False
+    assert is_scrolled_out(30, 5, 10, 20) is True
+    assert is_scrolled_out(25, 3, 10, 20) is False
