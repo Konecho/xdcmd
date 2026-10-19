@@ -43,7 +43,6 @@ class Forum:
             handler=functools.partial(xdnmb.action.loadForum, self)
         )
         b.window.align = WindowAlign.LEFT
-        b.window.content.show_cursor = False
         setattr(b.window, 'buttonType', ButtonType.Forum)
         return b.window
 
@@ -64,7 +63,6 @@ class Timeline:
             handler=functools.partial(xdnmb.action.loadForum, self)
         )
         b.window.align = WindowAlign.LEFT
-        b.window.content.show_cursor = False
         setattr(b.window, 'buttonType', ButtonType.Forum)
         return b.window
 
@@ -87,7 +85,6 @@ class Feed:
             handler=functools.partial(xdnmb.action.loadForum, self)
         )
         b.window.align = WindowAlign.LEFT
-        b.window.content.show_cursor = False
         setattr(b.window, 'buttonType', ButtonType.Forum)
         return b.window
 
